@@ -117,6 +117,33 @@
   }
 
   function clamp(n){ return Math.max(0, Math.min(100, n)); }
+function applyTimeDecay(p){
+  if (!p.updatedAt) return { ...p, needsUpdate: false };
+
+  const now = Date.now();
+  const last = p.updatedAt.toDate().getTime();
+  const minutesPassed = Math.floor((now - last) / (1000 * 60 * 10)); // bloques de 10 min
+
+  if (minutesPassed <= 0) return { ...p, needsUpdate: false };
+
+  let Hunger = p.Hunger ?? 0;
+  let Happiness = p.Happiness ?? 0;
+  let Energy = p.Energy ?? 0;
+
+  Hunger -= minutesPassed * 1;
+  Energy -= minutesPassed * 1;
+
+  if (Hunger < 30 || Energy < 30) {
+    Happiness -= minutesPassed * 1;
+  }
+
+  return {
+    Hunger: clamp(Hunger),
+    Happiness: clamp(Happiness),
+    Energy: clamp(Energy),
+    needsUpdate: true
+  };
+}
 
   function setBars(p){
     const Hunger = Number(p.Hunger ?? 0);
@@ -158,10 +185,19 @@
         return;
       }
       const p = snap.data();
+const decayed = applyTimeDecay(p);
 
+if (decayed.needsUpdate) {
+  updateDoc(petRef, {
+    Hunger: decayed.Hunger,
+    Happiness: decayed.Happiness,
+    Energy: decayed.Energy,
+    updatedAt: serverTimestamp()
+  });
+}
       document.getElementById("petName").value = p.name ?? "";
-      setBars(p);
-      setPetMood(p);
+      setBars(decayed);
+      setPetMood(decayed);
     },
     (err) => {
       bubble.textContent = "Error Firestore: " + err.message;
