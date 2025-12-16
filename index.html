@@ -92,10 +92,27 @@
 
     // 1) PEGA AQUÍ tu firebaseConfig (del paso 2)
     const firebaseConfig = {
-      // apiKey: "...",
-      // authDomain: "...",
-      // projectId: "...",
-      // ...
+      // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAl-_NVNdvBSq08C9d5soYAi-K20-2zM8E",
+  authDomain: "mascota-pareja.firebaseapp.com",
+  projectId: "mascota-pareja",
+  storageBucket: "mascota-pareja.firebasestorage.app",
+  messagingSenderId: "139071919542",
+  appId: "1:139071919542:web:3687d6b75f27040d2e5d17",
+  measurementId: "G-J0CL7GXBLD"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
     };
 
     const app = initializeApp(firebaseConfig);
@@ -105,24 +122,51 @@
     function clamp(n){ return Math.max(0, Math.min(100, n)); }
 
     // 2) Escuchar cambios en tiempo real (los 2 móviles verán lo mismo)
-    onSnapshot(petRef, (snap) => {
-      const p = snap.data();
-      document.getElementById("petName").value = p.name ?? "";
-
-      document.getElementById("HungerTxt").textContent = p.Hunger;
-      document.getElementById("happyTxt").textContent = p.Happiness;
-      document.getElementById("EnergyTxt").textContent = p.Energy;
-
-      document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
-      document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
-      document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
-
-      document.getElementById("LastAction").textContent = p.LastAction ?? "-";
-      document.getElementById("LastBy").textContent = p.LastBy ?? "-";
-    }
-              function setPetMood(p){
+    onSnapshotfunction setPetMood(p){
   const petEl = document.getElementById("pet");
   const bubble = document.getElementById("petBubble");
+
+  petEl.className = "idle";
+
+  const Hunger = Number(p.Hunger ?? 0);
+  const Happiness = Number(p.Happiness ?? 0);
+  const Energy = Number(p.Energy ?? 0);
+
+  if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
+  if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
+
+  bubble.textContent = "¡Estoy bien!";
+}
+
+onSnapshot(
+  petRef,
+  (snap) => {
+    if (!snap.exists()) {
+      document.getElementById("petBubble").textContent = "No existe pets/shared en Firestore.";
+      return;
+    }
+
+    const p = snap.data();
+    document.getElementById("petName").value = p.name ?? "";
+
+    document.getElementById("HungerTxt").textContent = p.Hunger ?? 0;
+    document.getElementById("happyTxt").textContent = p.Happiness ?? 0;
+    document.getElementById("EnergyTxt").textContent = p.Energy ?? 0;
+
+    document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
+    document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
+    document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
+
+    document.getElementById("LastAction").textContent = p.LastAction ?? "-";
+    document.getElementById("LastBy").textContent = p.LastBy ?? "-";
+
+    setPetMood(p);
+  },
+  (err) => {
+    document.getElementById("petBubble").textContent = "Error Firestore: " + err.message;
+  }
+);
+
 
   // Reset clases
   petEl.className = "idle";
