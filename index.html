@@ -90,32 +90,59 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Pega aquí tu firebaseConfig REAL (Firebase -> Project settings -> Your apps -> Web)
+  const bubble = document.getElementById("petBubble");
+  bubble.textContent = "JS cargado ✅ Conectando a Firebase…";
+
+  // Pega aquí SOLO el objeto firebaseConfig (el tuyo real)
   const firebaseConfig = {
-  apiKey: "AIzaSyAl-_NVNdvBSq08C9d5soYAi-K20-2zM8E",
-  authDomain: "mascota-pareja.firebaseapp.com",
-  projectId: "mascota-pareja",
-  storageBucket: "mascota-pareja.firebasestorage.app",
-  messagingSenderId: "139071919542",
-  appId: "1:139071919542:web:3687d6b75f27040d2e5d17",
-  measurementId: "G-J0CL7GXBLD"
+    apiKey: "AIzaSyAl-_NVNdvBSq08C9d5soYAi-K20-2zM8E",
+    authDomain: "mascota-pareja.firebaseapp.com",
+    projectId: "mascota-pareja",
+    storageBucket: "mascota-pareja.firebasestorage.app",
+    messagingSenderId: "139071919542",
+    appId: "1:139071919542:web:3687d6b75f27040d2e5d17",
+    measurementId: "G-J0CL7GXBLD"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const petRef = doc(db, "pets", "shared");
+  let db, petRef;
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    petRef = doc(db, "pets", "shared");
+    bubble.textContent = "Firebase OK ✅ Leyendo mascota…";
+  } catch (e) {
+    bubble.textContent = "Error inicializando Firebase: " + (e?.message ?? e);
+    throw e;
+  }
 
   function clamp(n){ return Math.max(0, Math.min(100, n)); }
 
+  function setBars(p){
+    const Hunger = Number(p.Hunger ?? 0);
+    const Happiness = Number(p.Happiness ?? 0);
+    const Energy = Number(p.Energy ?? 0);
+
+    document.getElementById("HungerTxt").textContent = Hunger;
+    document.getElementById("happyTxt").textContent = Happiness;
+    document.getElementById("EnergyTxt").textContent = Energy;
+
+    document.getElementById("HungerBar").style.width = Hunger + "%";
+    document.getElementById("happyBar").style.width = Happiness + "%";
+    document.getElementById("EnergyBar").style.width = Energy + "%";
+
+    document.getElementById("LastAction").textContent = p.LastAction ?? "-";
+    document.getElementById("LastBy").textContent = p.LastBy ?? "-";
+  }
+
   function setPetMood(p){
     const petEl = document.getElementById("pet");
-    const bubble = document.getElementById("petBubble");
-
-    petEl.className = "idle";
 
     const Hunger = Number(p.Hunger ?? 0);
     const Happiness = Number(p.Happiness ?? 0);
     const Energy = Number(p.Energy ?? 0);
+
+    petEl.className = "idle";
 
     if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
     if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
@@ -127,29 +154,17 @@
     petRef,
     (snap) => {
       if (!snap.exists()) {
-        document.getElementById("petBubble").textContent = "No existe pets/shared en Firestore.";
+        bubble.textContent = "No existe pets/shared en Firestore.";
         return;
       }
-
       const p = snap.data();
 
       document.getElementById("petName").value = p.name ?? "";
-
-      document.getElementById("HungerTxt").textContent = p.Hunger ?? 0;
-      document.getElementById("happyTxt").textContent = p.Happiness ?? 0;
-      document.getElementById("EnergyTxt").textContent = p.Energy ?? 0;
-
-      document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
-      document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
-      document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
-
-      document.getElementById("LastAction").textContent = p.LastAction ?? "-";
-      document.getElementById("LastBy").textContent = p.LastBy ?? "-";
-
+      setBars(p);
       setPetMood(p);
     },
     (err) => {
-      document.getElementById("petBubble").textContent = "Error Firestore: " + err.message;
+      bubble.textContent = "Error Firestore: " + err.message;
     }
   );
 
@@ -169,19 +184,27 @@
     const petEl = document.getElementById("pet");
     if(type==="play"){ petEl.className = "play"; }
 
-    await updateDoc(petRef, {
-      Hunger: nh,
-      Happiness: nha,
-      Energy: ne,
-      LastAction: actionText,
-      LastBy: who,
-      updatedAt: serverTimestamp()
-    });
+    try {
+      await updateDoc(petRef, {
+        Hunger: nh,
+        Happiness: nha,
+        Energy: ne,
+        LastAction: actionText,
+        LastBy: who,
+        updatedAt: serverTimestamp()
+      });
+    } catch (e) {
+      bubble.textContent = "Error al guardar: " + (e?.message ?? e);
+    }
   };
 
   window.saveName = async () => {
     const name = document.getElementById("petName").value.trim() || "Mascota";
-    await updateDoc(petRef, { name });
+    try {
+      await updateDoc(petRef, { name });
+    } catch (e) {
+      bubble.textContent = "Error guardando nombre: " + (e?.message ?? e);
+    }
   };
 </script>
 </body>
