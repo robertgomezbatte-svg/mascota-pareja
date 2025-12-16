@@ -86,21 +86,12 @@
   </p>
 
   <!-- Firebase (sin instalar nada) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // 1) PEGA AQUÍ tu firebaseConfig (del paso 2)
-    const firebaseConfig = {
-      // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+  // Pega aquí tu firebaseConfig REAL (Firebase -> Project settings -> Your apps -> Web)
+  const firebaseConfig = {
   apiKey: "AIzaSyAl-_NVNdvBSq08C9d5soYAi-K20-2zM8E",
   authDomain: "mascota-pareja.firebaseapp.com",
   projectId: "mascota-pareja",
@@ -108,112 +99,90 @@ const firebaseConfig = {
   messagingSenderId: "139071919542",
   appId: "1:139071919542:web:3687d6b75f27040d2e5d17",
   measurementId: "G-J0CL7GXBLD"
-};
+  };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-    };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const petRef = doc(db, "pets", "shared");
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const petRef = doc(db, "pets", "shared");
+  function clamp(n){ return Math.max(0, Math.min(100, n)); }
 
-    function clamp(n){ return Math.max(0, Math.min(100, n)); }
+  function setPetMood(p){
+    const petEl = document.getElementById("pet");
+    const bubble = document.getElementById("petBubble");
 
-    // 2) Escuchar cambios en tiempo real (los 2 móviles verán lo mismo)
-    onSnapshotfunction setPetMood(p){
-  const petEl = document.getElementById("pet");
-  const bubble = document.getElementById("petBubble");
+    petEl.className = "idle";
 
-  petEl.className = "idle";
+    const Hunger = Number(p.Hunger ?? 0);
+    const Happiness = Number(p.Happiness ?? 0);
+    const Energy = Number(p.Energy ?? 0);
 
-  const Hunger = Number(p.Hunger ?? 0);
-  const Happiness = Number(p.Happiness ?? 0);
-  const Energy = Number(p.Energy ?? 0);
+    if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
+    if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
 
-  if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
-  if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
-
-  bubble.textContent = "¡Estoy bien!";
-}
-
-onSnapshot(
-  petRef,
-  (snap) => {
-    if (!snap.exists()) {
-      document.getElementById("petBubble").textContent = "No existe pets/shared en Firestore.";
-      return;
-    }
-
-    const p = snap.data();
-    document.getElementById("petName").value = p.name ?? "";
-
-    document.getElementById("HungerTxt").textContent = p.Hunger ?? 0;
-    document.getElementById("happyTxt").textContent = p.Happiness ?? 0;
-    document.getElementById("EnergyTxt").textContent = p.Energy ?? 0;
-
-    document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
-    document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
-    document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
-
-    document.getElementById("LastAction").textContent = p.LastAction ?? "-";
-    document.getElementById("LastBy").textContent = p.LastBy ?? "-";
-
-    setPetMood(p);
-  },
-  (err) => {
-    document.getElementById("petBubble").textContent = "Error Firestore: " + err.message;
+    bubble.textContent = "¡Estoy bien!";
   }
-);
 
+  onSnapshot(
+    petRef,
+    (snap) => {
+      if (!snap.exists()) {
+        document.getElementById("petBubble").textContent = "No existe pets/shared en Firestore.";
+        return;
+      }
 
-  // Reset clases
-  petEl.className = "idle";
+      const p = snap.data();
 
-  const Hunger = p.Hunger ?? 0;
-  const Happiness = p.Happiness ?? 0;
-  const Energy = p.Energy ?? 0;
+      document.getElementById("petName").value = p.name ?? "";
 
-  // Reglas simples de “humor”
-  if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
-  if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
+      document.getElementById("HungerTxt").textContent = p.Hunger ?? 0;
+      document.getElementById("happyTxt").textContent = p.Happiness ?? 0;
+      document.getElementById("EnergyTxt").textContent = p.Energy ?? 0;
 
-  bubble.textContent = "¡Estoy bien!";
-}
-);
+      document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
+      document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
+      document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
 
-    // 3) Acciones
-    window.act = async (type) => {
-      const who = document.getElementById("who").value.trim() || "Alguien";
-      // Leemos el estado actual desde la UI (ya sincronizada)
-      const Hunger = Number(document.getElementById("HungerTxt").textContent || 0);
-      const Happiness = Number(document.getElementById("happyTxt").textContent || 0);
-      const Energy = Number(document.getElementById("EnergyTxt").textContent || 0);
+      document.getElementById("LastAction").textContent = p.LastAction ?? "-";
+      document.getElementById("LastBy").textContent = p.LastBy ?? "-";
 
-      let nh=Hunger, nha=Happiness, ne=Energy, actionText="";
+      setPetMood(p);
+    },
+    (err) => {
+      document.getElementById("petBubble").textContent = "Error Firestore: " + err.message;
+    }
+  );
 
-      if(type==="feed"){ nh = clamp(Hunger + 20); ne = clamp(Energy - 5); actionText="Alimentar"; }
-      if(type==="play"){ nha = clamp(Happiness + 20); ne = clamp(Energy - 15); nh = clamp(Hunger - 5); actionText="Jugar"; }
-      if(type==="sleep"){ ne = clamp(Energy + 25); nh = clamp(Hunger - 10); actionText="Dormir"; }
-// Animación inmediata local al pulsar
-const petEl = document.getElementById("pet");
-if(type==="play"){ petEl.className = "play"; }
+  window.act = async (type) => {
+    const who = document.getElementById("who").value.trim() || "Alguien";
 
-      await updateDoc(petRef, {
-        Hunger: nh,
-        Happiness: nha,
-        Energy: ne,
-        LastAction: actionText,
-        LastBy: who,
-        updatedAt: serverTimestamp()
-      });
-    };
+    const Hunger = Number(document.getElementById("HungerTxt").textContent || 0);
+    const Happiness = Number(document.getElementById("happyTxt").textContent || 0);
+    const Energy = Number(document.getElementById("EnergyTxt").textContent || 0);
 
-    window.saveName = async () => {
-      const name = document.getElementById("petName").value.trim() || "Mascota";
-      await updateDoc(petRef, { name });
-    };
-  </script>
+    let nh = Hunger, nha = Happiness, ne = Energy, actionText = "";
+
+    if(type==="feed"){ nh = clamp(Hunger + 20); ne = clamp(Energy - 5); actionText="Alimentar"; }
+    if(type==="play"){ nha = clamp(Happiness + 20); ne = clamp(Energy - 15); nh = clamp(Hunger - 5); actionText="Jugar"; }
+    if(type==="sleep"){ ne = clamp(Energy + 25); nh = clamp(Hunger - 10); actionText="Dormir"; }
+
+    const petEl = document.getElementById("pet");
+    if(type==="play"){ petEl.className = "play"; }
+
+    await updateDoc(petRef, {
+      Hunger: nh,
+      Happiness: nha,
+      Energy: ne,
+      LastAction: actionText,
+      LastBy: who,
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  window.saveName = async () => {
+    const name = document.getElementById("petName").value.trim() || "Mascota";
+    await updateDoc(petRef, { name });
+  };
+</script>
 </body>
 </html>
