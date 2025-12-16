@@ -11,7 +11,7 @@
     button{padding:10px 12px;margin:6px 6px 0 0}
     input{padding:10px;width:100%;margin:6px 0 10px}
     .small{opacity:.8;font-size:14px}
-    #petStage{
+    #Petstage{
   margin: 12px 0 16px;
   padding: 14px 12px;
   border: 1px solid #ddd;
@@ -54,7 +54,7 @@
 </head>
 <body>
   <h1>🐾 Mascota</h1>
-<div id="petStage">
+<div id="Petstage">
   <div id="pet" class="idle" aria-label="mascota">🐶</div>
   <div id="petBubble" class="small"></div>
 </div>
@@ -109,7 +109,7 @@
   try {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
-    petRef = doc(db, "pets", "shared");
+    petRef = doc(db, "Pets", "shared");
     bubble.textContent = "Firebase OK ✅ Leyendo mascota…";
   } catch (e) {
     bubble.textContent = "Error inicializando Firebase: " + (e?.message ?? e);
@@ -154,7 +154,7 @@
     petRef,
     (snap) => {
       if (!snap.exists()) {
-        bubble.textContent = "No existe pets/shared en Firestore.";
+        bubble.textContent = "No existe Pets/shared en Firestore.";
         return;
       }
       const p = snap.data();
