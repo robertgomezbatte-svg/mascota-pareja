@@ -66,14 +66,14 @@
   <input id="petName" />
 
   <div>
-    <div>Hambre: <span id="hungerTxt"></span></div>
-    <div class="bar"><div class="fill" id="hungerBar"></div></div>
+    <div>Hambre: <span id="HungerTxt"></span></div>
+    <div class="bar"><div class="fill" id="HungerBar"></div></div>
 
     <div>Felicidad: <span id="happyTxt"></span></div>
     <div class="bar"><div class="fill" id="happyBar"></div></div>
 
-    <div>Energía: <span id="energyTxt"></span></div>
-    <div class="bar"><div class="fill" id="energyBar"></div></div>
+    <div>Energía: <span id="EnergyTxt"></span></div>
+    <div class="bar"><div class="fill" id="EnergyBar"></div></div>
   </div>
 
   <button onclick="act('feed')">🍎 Alimentar</button>
@@ -109,13 +109,13 @@
       const p = snap.data();
       document.getElementById("petName").value = p.name ?? "";
 
-      document.getElementById("hungerTxt").textContent = p.hunger;
-      document.getElementById("happyTxt").textContent = p.happiness;
-      document.getElementById("energyTxt").textContent = p.energy;
+      document.getElementById("HungerTxt").textContent = p.Hunger;
+      document.getElementById("happyTxt").textContent = p.Happiness;
+      document.getElementById("EnergyTxt").textContent = p.Energy;
 
-      document.getElementById("hungerBar").style.width = (p.hunger ?? 0) + "%";
-      document.getElementById("happyBar").style.width = (p.happiness ?? 0) + "%";
-      document.getElementById("energyBar").style.width = (p.energy ?? 0) + "%";
+      document.getElementById("HungerBar").style.width = (p.Hunger ?? 0) + "%";
+      document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
+      document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
 
       document.getElementById("lastAction").textContent = p.lastAction ?? "-";
       document.getElementById("lastBy").textContent = p.lastBy ?? "-";
@@ -127,13 +127,13 @@
   // Reset clases
   petEl.className = "idle";
 
-  const hunger = p.hunger ?? 0;
-  const happiness = p.happiness ?? 0;
-  const energy = p.energy ?? 0;
+  const Hunger = p.Hunger ?? 0;
+  const Happiness = p.Happiness ?? 0;
+  const Energy = p.Energy ?? 0;
 
   // Reglas simples de “humor”
-  if (energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
-  if (hunger <= 20 || happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
+  if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
+  if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
 
   bubble.textContent = "¡Estoy bien!";
 }
@@ -143,23 +143,23 @@
     window.act = async (type) => {
       const who = document.getElementById("who").value.trim() || "Alguien";
       // Leemos el estado actual desde la UI (ya sincronizada)
-      const hunger = Number(document.getElementById("hungerTxt").textContent || 0);
-      const happiness = Number(document.getElementById("happyTxt").textContent || 0);
-      const energy = Number(document.getElementById("energyTxt").textContent || 0);
+      const Hunger = Number(document.getElementById("HungerTxt").textContent || 0);
+      const Happiness = Number(document.getElementById("happyTxt").textContent || 0);
+      const Energy = Number(document.getElementById("EnergyTxt").textContent || 0);
 
-      let nh=hunger, nha=happiness, ne=energy, actionText="";
+      let nh=Hunger, nha=Happiness, ne=Energy, actionText="";
 
-      if(type==="feed"){ nh = clamp(hunger + 20); ne = clamp(energy - 5); actionText="Alimentar"; }
-      if(type==="play"){ nha = clamp(happiness + 20); ne = clamp(energy - 15); nh = clamp(hunger - 5); actionText="Jugar"; }
-      if(type==="sleep"){ ne = clamp(energy + 25); nh = clamp(hunger - 10); actionText="Dormir"; }
+      if(type==="feed"){ nh = clamp(Hunger + 20); ne = clamp(Energy - 5); actionText="Alimentar"; }
+      if(type==="play"){ nha = clamp(Happiness + 20); ne = clamp(Energy - 15); nh = clamp(Hunger - 5); actionText="Jugar"; }
+      if(type==="sleep"){ ne = clamp(Energy + 25); nh = clamp(Hunger - 10); actionText="Dormir"; }
 // Animación inmediata local al pulsar
 const petEl = document.getElementById("pet");
 if(type==="play"){ petEl.className = "play"; }
 
       await updateDoc(petRef, {
-        hunger: nh,
-        happiness: nha,
-        energy: ne,
+        Hunger: nh,
+        Happiness: nha,
+        Energy: ne,
         lastAction: actionText,
         lastBy: who,
         updatedAt: serverTimestamp()
