@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mascota pareja</title>
+  <style>
+    body{font-family:system-ui;margin:20px;max-width:520px}
+    .bar{height:14px;background:#eee;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+    .fill{height:100%;background:#444;width:0%}
+    button{padding:10px 12px;margin:6px 6px 0 0}
+    input{padding:10px;width:100%;margin:6px 0 10px}
+    .small{opacity:.8;font-size:14px}
+  </style>
+</head>
+<body>
+  <h1>🐾 Mascota</h1>
+
+  <label>Tu nombre (para registrar quién hizo la acción)</label>
+  <input id="who" placeholder="Ej: Alex" />
+
+  <label>Nombre de la mascota</label>
+  <input id="petName" />
+
+  <div>
+    <div>Hambre: <span id="hungerTxt"></span></div>
+    <div class="bar"><div class="fill" id="hungerBar"></div></div>
+
+    <div>Felicidad: <span id="happyTxt"></span></div>
+    <div class="bar"><div class="fill" id="happyBar"></div></div>
+
+    <div>Energía: <span id="energyTxt"></span></div>
+    <div class="bar"><div class="fill" id="energyBar"></div></div>
+  </div>
+
+  <button onclick="act('feed')">🍎 Alimentar</button>
+  <button onclick="act('play')">🎾 Jugar</button>
+  <button onclick="act('sleep')">😴 Dormir</button>
+  <button onclick="saveName()">💾 Guardar nombre</button>
+
+  <p class="small">
+    Última acción: <b id="lastAction"></b> — por <b id="lastBy"></b>
+  </p>
+
+  <!-- Firebase (sin instalar nada) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 1) PEGA AQUÍ tu firebaseConfig (del paso 2)
+    const firebaseConfig = {
+      // apiKey: "...",
+      // authDomain: "...",
+      // projectId: "...",
+      // ...
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const petRef = doc(db, "pets", "shared");
+
+    function clamp(n){ return Math.max(0, Math.min(100, n)); }
+
+    // 2) Escuchar cambios en tiempo real (los 2 móviles verán lo mismo)
+    onSnapshot(petRef, (snap) => {
+      const p = snap.data();
+      document.getElementById("petName").value = p.name ?? "";
+
+      document.getElementById("hungerTxt").textContent = p.hunger;
+      document.getElementById("happyTxt").textContent = p.happiness;
+      document.getElementById("energyTxt").textContent = p.energy;
+
+      document.getElementById("hungerBar").style.width = (p.hunger ?? 0) + "%";
+      document.getElementById("happyBar").style.width = (p.happiness ?? 0) + "%";
+      document.getElementById("energyBar").style.width = (p.energy ?? 0) + "%";
+
+      document.getElementById("lastAction").textContent = p.lastAction ?? "-";
+      document.getElementById("lastBy").textContent = p.lastBy ?? "-";
+    });
+
+    // 3) Acciones
+    window.act = async (type) => {
+      const who = document.getElementById("who").value.trim() || "Alguien";
+      // Leemos el estado actual desde la UI (ya sincronizada)
+      const hunger = Number(document.getElementById("hungerTxt").textContent || 0);
+      const happiness = Number(document.getElementById("happyTxt").textContent || 0);
+      const energy = Number(document.getElementById("energyTxt").textContent || 0);
+
+      let nh=hunger, nha=happiness, ne=energy, actionText="";
+
+      if(type==="feed"){ nh = clamp(hunger + 20); ne = clamp(energy - 5); actionText="Alimentar"; }
+      if(type==="play"){ nha = clamp(happiness + 20); ne = clamp(energy - 15); nh = clamp(hunger - 5); actionText="Jugar"; }
+      if(type==="sleep"){ ne = clamp(energy + 25); nh = clamp(hunger - 10); actionText="Dormir"; }
+
+      await updateDoc(petRef, {
+        hunger: nh,
+        happiness: nha,
+        energy: ne,
+        lastAction: actionText,
+        lastBy: who,
+        updatedAt: serverTimestamp()
+      });
+    };
+
+    window.saveName = async () => {
+      const name = document.getElementById("petName").value.trim() || "Mascota";
+      await updateDoc(petRef, { name });
+    };
+  </script>
+</body>
+</html>
