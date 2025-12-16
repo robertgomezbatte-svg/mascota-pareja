@@ -82,7 +82,7 @@
   <button onclick="saveName()">💾 Guardar nombre</button>
 
   <p class="small">
-    Última acción: <b id="lastAction"></b> — por <b id="lastBy"></b>
+    Última acción: <b id="LastAction"></b> — por <b id="LastBy"></b>
   </p>
 
   <!-- Firebase (sin instalar nada) -->
@@ -117,8 +117,8 @@
       document.getElementById("happyBar").style.width = (p.Happiness ?? 0) + "%";
       document.getElementById("EnergyBar").style.width = (p.Energy ?? 0) + "%";
 
-      document.getElementById("lastAction").textContent = p.lastAction ?? "-";
-      document.getElementById("lastBy").textContent = p.lastBy ?? "-";
+      document.getElementById("LastAction").textContent = p.LastAction ?? "-";
+      document.getElementById("LastBy").textContent = p.LastBy ?? "-";
     }
               function setPetMood(p){
   const petEl = document.getElementById("pet");
@@ -160,8 +160,8 @@ if(type==="play"){ petEl.className = "play"; }
         Hunger: nh,
         Happiness: nha,
         Energy: ne,
-        lastAction: actionText,
-        lastBy: who,
+        LastAction: actionText,
+        LastBy: who,
         updatedAt: serverTimestamp()
       });
     };
