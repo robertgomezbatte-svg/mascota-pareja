@@ -11,10 +11,53 @@
     button{padding:10px 12px;margin:6px 6px 0 0}
     input{padding:10px;width:100%;margin:6px 0 10px}
     .small{opacity:.8;font-size:14px}
+    #petStage{
+  margin: 12px 0 16px;
+  padding: 14px 12px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+}
+#pet{
+  font-size: 72px;
+  line-height: 1;
+  display: inline-block;
+  transform-origin: 50% 100%;
+  user-select: none;
+}
+#petBubble{ margin-top: 8px; min-height: 18px; }
+
+/* Animaciones */
+@keyframes bounce {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%     { transform: translateY(-10px) scale(1.02); }
+}
+@keyframes wiggle {
+  0%,100% { transform: rotate(0deg); }
+  25%     { transform: rotate(-6deg); }
+  75%     { transform: rotate(6deg); }
+}
+@keyframes sleep {
+  0%,100% { transform: translateY(0) scale(1); opacity: 1; }
+  50%     { transform: translateY(2px) scale(0.98); opacity: 0.85; }
+}
+@keyframes sad {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%     { transform: translateY(6px) rotate(-2deg); }
+}
+
+.idle { animation: bounce 1.6s infinite; }
+.play { animation: wiggle 0.6s ease-in-out 3; }
+.nap  { animation: sleep 1.8s infinite; }
+.sad  { animation: sad 1.4s infinite; }
+
   </style>
 </head>
 <body>
   <h1>🐾 Mascota</h1>
+<div id="petStage">
+  <div id="pet" class="idle" aria-label="mascota">🐶</div>
+  <div id="petBubble" class="small"></div>
+</div>
 
   <label>Tu nombre (para registrar quién hizo la acción)</label>
   <input id="who" placeholder="Ej: Alex" />
@@ -76,7 +119,25 @@
 
       document.getElementById("lastAction").textContent = p.lastAction ?? "-";
       document.getElementById("lastBy").textContent = p.lastBy ?? "-";
-    });
+    }
+              function setPetMood(p){
+  const petEl = document.getElementById("pet");
+  const bubble = document.getElementById("petBubble");
+
+  // Reset clases
+  petEl.className = "idle";
+
+  const hunger = p.hunger ?? 0;
+  const happiness = p.happiness ?? 0;
+  const energy = p.energy ?? 0;
+
+  // Reglas simples de “humor”
+  if (energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
+  if (hunger <= 20 || happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
+
+  bubble.textContent = "¡Estoy bien!";
+}
+);
 
     // 3) Acciones
     window.act = async (type) => {
@@ -91,6 +152,9 @@
       if(type==="feed"){ nh = clamp(hunger + 20); ne = clamp(energy - 5); actionText="Alimentar"; }
       if(type==="play"){ nha = clamp(happiness + 20); ne = clamp(energy - 15); nh = clamp(hunger - 5); actionText="Jugar"; }
       if(type==="sleep"){ ne = clamp(energy + 25); nh = clamp(hunger - 10); actionText="Dormir"; }
+// Animación inmediata local al pulsar
+const petEl = document.getElementById("pet");
+if(type==="play"){ petEl.className = "play"; }
 
       await updateDoc(petRef, {
         hunger: nh,
