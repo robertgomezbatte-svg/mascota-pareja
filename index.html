@@ -17,13 +17,7 @@
   border: 1px solid #ddd;
   border-radius: 14px;
 }
-#pet{
-  font-size: 72px;
-  line-height: 1;
-  display: inline-block;
-  transform-origin: 50% 100%;
-  user-select: none;
-}
+
 #petBubble{ margin-top: 8px; min-height: 18px; }
 
 /* Animaciones */
@@ -50,12 +44,204 @@
 .nap  { animation: sleep 1.8s infinite; }
 .sad  { animation: sad 1.4s infinite; }
 
+    /* ===== Mascota “pelota” viva ===== */
+#Petstage{
+  margin: 12px 0 16px;
+  padding: 14px 12px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+}
+
+.pet{
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  position: relative;
+  box-shadow: 0 18px 35px rgba(0,0,0,.18);
+  user-select: none;
+  display:inline-block;
+  will-change: transform;
+}
+
+/* piel por mood */
+.pet.mood-ok{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e8f3ff 35%, #b7dbff 100%); }
+.pet.mood-hungry{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #fff0e0 40%, #ffb87a 100%); }
+.pet.mood-tired{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f0f0ff 40%, #b9b9ff 100%); }
+.pet.mood-sad{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f3f3f3 35%, #cfcfcf 100%); }
+
+.shine{
+  position:absolute;
+  top: 18px; left: 22px;
+  width: 52px; height: 52px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.55);
+}
+
+.face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+
+.eyes{
+  position:absolute;
+  top: 48px;
+  width: 90px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.eye{
+  width: 22px; height: 22px;
+  background: #111;
+  border-radius: 999px;
+  position:relative;
+  overflow:hidden;
+  transform-origin: 50% 50%;
+}
+
+.pupil{
+  width: 10px; height: 10px;
+  background: #fff;
+  border-radius: 999px;
+  position:absolute;
+  top: 5px; left: 6px;
+  opacity: .9;
+}
+
+.mouth{
+  position:absolute;
+  top: 82px;
+  width: 28px; height: 14px;
+  border: 4px solid #111;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0 0 999px 999px;
+}
+
+.cheek{
+  position:absolute;
+  top: 82px;
+  width: 14px; height: 10px;
+  border-radius: 999px;
+  background: rgba(255,90,120,.25);
+}
+.cheek.left{ left: 34px; }
+.cheek.right{ right: 34px; }
+
+.zzz{
+  position:absolute;
+  top: -8px;
+  right: -10px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events:none;
+}
+
+/* Estados */
+.pet.state-idle{
+  animation: idleFloat 2.2s ease-in-out infinite,
+             idleSquish 2.2s ease-in-out infinite;
+}
+.pet.state-idle .eye{ animation: blink 4.8s infinite; }
+.pet.state-idle .pupil{ animation: lookAround 3.8s ease-in-out infinite; }
+
+.pet.state-play{ animation: playBounce .9s ease-in-out infinite; }
+.pet.state-eat{ animation: eatChomp .55s ease-in-out 6; }
+
+.pet.state-sleep{
+  animation: sleepBob 2.8s ease-in-out infinite;
+  filter: saturate(.85);
+}
+.pet.state-sleep .eyes{ opacity: .15; }
+.pet.state-sleep .mouth{
+  width: 18px; height: 10px;
+  border-width: 3px;
+  border-radius: 999px;
+  border-top: 3px solid #111;
+  border-left: 0; border-right: 0; border-bottom: 0;
+  top: 86px;
+}
+.pet.state-sleep .zzz{
+  opacity: 1;
+  animation: zzz 1.6s ease-in-out infinite;
+}
+
+/* Mood triste */
+.pet.mood-sad{
+  transform: translateY(6px) scaleY(.97);
+}
+.pet.mood-sad .mouth{
+  top: 88px;
+  width: 26px;
+  height: 10px;
+  border-bottom: 0;
+  border-top: 4px solid #111;
+  border-radius: 999px 999px 0 0;
+}
+
+/* Animaciones */
+@keyframes idleFloat{
+  0%,100%{ transform: translateY(0px); }
+  50%{ transform: translateY(-6px); }
+}
+@keyframes idleSquish{
+  0%,100%{ border-radius: 999px; }
+  50%{ border-radius: 999px 999px 920px 920px; }
+}
+@keyframes blink{
+  0%, 92%, 100%{ transform: scaleY(1); }
+  94%{ transform: scaleY(.12); }
+  96%{ transform: scaleY(1); }
+}
+@keyframes lookAround{
+  0%,100%{ transform: translate(0,0); }
+  25%{ transform: translate(2px,1px); }
+  50%{ transform: translate(-2px,1px); }
+  75%{ transform: translate(1px,-1px); }
+}
+@keyframes playBounce{
+  0%,100%{ transform: translateY(0) rotate(0deg) scale(1); }
+  35%{ transform: translateY(-16px) rotate(6deg) scale(1.02); }
+  70%{ transform: translateY(2px) rotate(-6deg) scale(.98); }
+}
+@keyframes eatChomp{
+  0%,100%{ transform: scaleY(1) scaleX(1); }
+  50%{ transform: scaleY(.92) scaleX(1.03); }
+}
+@keyframes sleepBob{
+  0%,100%{ transform: translateY(2px) scale(.99); }
+  50%{ transform: translateY(-4px) scale(1); }
+}
+@keyframes zzz{
+  0%{ transform: translateY(10px); opacity: 0; }
+  30%{ opacity: .9; }
+  100%{ transform: translateY(-10px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .pet, .pet *{ animation: none !important; transition: none !important; }
+}
+
   </style>
 </head>
 <body>
   <h1>🐾 Mascota</h1>
 <div id="Petstage">
-  <div id="pet" class="idle" aria-label="mascota">🐶</div>
+  <div id="pet" class="pet state-idle mood-ok" aria-label="mascota">
+    <div class="shine"></div>
+
+    <div class="face">
+      <div class="eyes">
+        <div class="eye left"><div class="pupil"></div></div>
+        <div class="eye right"><div class="pupil"></div></div>
+      </div>
+      <div class="mouth"></div>
+      <div class="cheek left"></div>
+      <div class="cheek right"></div>
+    </div>
+
+    <div class="zzz" aria-hidden="true">ZzZ</div>
+  </div>
+
   <div id="petBubble" class="small"></div>
 </div>
 
@@ -162,20 +348,35 @@ function applyTimeDecay(p){
     document.getElementById("LastBy").textContent = p.LastBy ?? "-";
   }
 
-  function setPetMood(p){
-    const petEl = document.getElementById("pet");
+  function setPetState(state){
+  const petEl = document.getElementById("pet");
+  petEl.classList.remove("state-idle","state-play","state-eat","state-sleep");
+  petEl.classList.add(`state-${state}`);
+}
 
-    const Hunger = Number(p.Hunger ?? 0);
-    const Happiness = Number(p.Happiness ?? 0);
-    const Energy = Number(p.Energy ?? 0);
+function setPetMood(p){
+  const petEl = document.getElementById("pet");
 
-    petEl.className = "idle";
+  const Hunger = Number(p.Hunger ?? 0);
+  const Happiness = Number(p.Happiness ?? 0);
+  const Energy = Number(p.Energy ?? 0);
 
-    if (Energy <= 20) { petEl.className = "nap"; bubble.textContent = "Tengo sueño…"; return; }
-    if (Hunger <= 20 || Happiness <= 20) { petEl.className = "sad"; bubble.textContent = "No me siento muy bien…"; return; }
+  // mood (color/expresión)
+  petEl.classList.remove("mood-ok","mood-hungry","mood-tired","mood-sad");
 
-    bubble.textContent = "¡Estoy bien!";
-  }
+  if (Happiness <= 20) petEl.classList.add("mood-sad");
+  else if (Hunger <= 20) petEl.classList.add("mood-hungry");
+  else if (Energy <= 20) petEl.classList.add("mood-tired");
+  else petEl.classList.add("mood-ok");
+
+  // state (animación principal)
+  if (Energy <= 15) { setPetState("sleep"); bubble.textContent = "Tengo sueño…"; return; }
+  if (Hunger <= 15 || Happiness <= 15) { setPetState("idle"); bubble.textContent = "No me siento muy bien…"; return; }
+
+  setPetState("idle");
+  bubble.textContent = "¡Estoy bien!";
+}
+
 
   onSnapshot(
     petRef,
@@ -217,8 +418,10 @@ if (decayed.needsUpdate) {
     if(type==="play"){ nha = clamp(Happiness + 20); ne = clamp(Energy - 15); nh = clamp(Hunger - 5); actionText="Jugar"; }
     if(type==="sleep"){ ne = clamp(Energy + 25); nh = clamp(Hunger - 10); actionText="Dormir"; }
 
-    const petEl = document.getElementById("pet");
-    if(type==="play"){ petEl.className = "play"; }
+    if(type==="play"){ setPetState("play"); setTimeout(() => setPetState("idle"), 1400); }
+if(type==="feed"){ setPetState("eat");  setTimeout(() => setPetState("idle"), 900); }
+if(type==="sleep"){ setPetState("sleep"); }
+
 
     try {
       await updateDoc(petRef, {
