@@ -11,791 +11,200 @@
     button{padding:10px 12px;margin:6px 6px 0 0}
     input{padding:10px;width:100%;margin:6px 0 10px}
     .small{opacity:.8;font-size:14px}
-    #Petstage{
-  margin: 12px 0 16px;
-  padding: 14px 12px;
-  border: 1px solid #ddd;
-  border-radius: 14px;
-}
-
-#petBubble{ margin-top: 8px; min-height: 18px; }
-
-/* Animaciones */
-@keyframes bounce {
-  0%,100% { transform: translateY(0) scale(1); }
-  50%     { transform: translateY(-10px) scale(1.02); }
-}
-@keyframes wiggle {
-  0%,100% { transform: rotate(0deg); }
-  25%     { transform: rotate(-6deg); }
-  75%     { transform: rotate(6deg); }
-}
-@keyframes sleep {
-  0%,100% { transform: translateY(0) scale(1); opacity: 1; }
-  50%     { transform: translateY(2px) scale(0.98); opacity: 0.85; }
-}
-@keyframes sad {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50%     { transform: translateY(6px) rotate(-2deg); }
-}
-
-.idle { animation: bounce 1.6s infinite; }
-.play { animation: wiggle 0.6s ease-in-out 3; }
-.nap  { animation: sleep 1.8s infinite; }
-.sad  { animation: sad 1.4s infinite; }
 
     /* ===== Mascota “pelota” viva ===== */
-#Petstage{
-  margin: 12px 0 16px;
-  padding: 14px 12px;
-  border: 1px solid #ddd;
-  border-radius: 14px;
-}
-
-.pet{
-  width: 140px;
-  height: 140px;
-  border-radius: 999px;
-  position: relative;
-  box-shadow: 0 18px 35px rgba(0,0,0,.18);
-  user-select: none;
-  display:inline-block;
-  will-change: transform;
-}
-
-/* piel por mood */
-.pet.mood-ok{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e8f3ff 35%, #b7dbff 100%); }
-.pet.mood-hungry{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #fff0e0 40%, #ffb87a 100%); }
-.pet.mood-tired{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f0f0ff 40%, #b9b9ff 100%); }
-.pet.mood-sad{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f3f3f3 35%, #cfcfcf 100%); }
-
-.shine{
-  position:absolute;
-  top: 18px; left: 22px;
-  width: 52px; height: 52px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.55);
-}
-
-.face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
-
-.eyes{
-  position:absolute;
-  top: 48px;
-  width: 90px;
-  display:flex;
-  justify-content:space-between;
-}
-
-.eye{
-  width: 22px; height: 22px;
-  background: #111;
-  border-radius: 999px;
-  position:relative;
-  overflow:hidden;
-  transform-origin: 50% 50%;
-}
-
-.pupil{
-  width: 10px; height: 10px;
-  background: #fff;
-  border-radius: 999px;
-  position:absolute;
-  top: 5px; left: 6px;
-  opacity: .9;
-}
-
-.mouth{
-  position:absolute;
-  top: 82px;
-  width: 28px; height: 14px;
-  border: 4px solid #111;
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
-  border-radius: 0 0 999px 999px;
-}
-
-.cheek{
-  position:absolute;
-  top: 82px;
-  width: 14px; height: 10px;
-  border-radius: 999px;
-  background: rgba(255,90,120,.25);
-}
-.cheek.left{ left: 34px; }
-.cheek.right{ right: 34px; }
-
-.zzz{
-  position:absolute;
-  top: -8px;
-  right: -10px;
-  font-weight: 700;
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events:none;
-}
-
-/* Estados */
-.pet.state-idle{
-  animation: idleFloat 2.2s ease-in-out infinite,
-             idleSquish 2.2s ease-in-out infinite;
-}
-.pet.state-idle .eye{ animation: blink 4.8s infinite; }
-.pet.state-idle .pupil{ animation: lookAround 3.8s ease-in-out infinite; }
-
-.pet.state-play{ animation: playBounce .9s ease-in-out infinite; }
-.pet.state-eat{ animation: eatChomp .55s ease-in-out 6; }
-
-.pet.state-sleep{
-  animation: sleepBob 2.8s ease-in-out infinite;
-  filter: saturate(.85);
-}
-.pet.state-sleep .eyes{ opacity: .15; }
-.pet.state-sleep .mouth{
-  width: 18px; height: 10px;
-  border-width: 3px;
-  border-radius: 999px;
-  border-top: 3px solid #111;
-  border-left: 0; border-right: 0; border-bottom: 0;
-  top: 86px;
-}
-.pet.state-sleep .zzz{
-  opacity: 1;
-  animation: zzz 1.6s ease-in-out infinite;
-}
-
-/* Mood triste */
-.pet.mood-sad{
-  transform: translateY(6px) scaleY(.97);
-}
-.pet.mood-sad .mouth{
-  top: 88px;
-  width: 26px;
-  height: 10px;
-  border-bottom: 0;
-  border-top: 4px solid #111;
-  border-radius: 999px 999px 0 0;
-}
-
-/* Animaciones */
-@keyframes idleFloat{
-  0%,100%{ transform: translateY(0px); }
-  50%{ transform: translateY(-6px); }
-}
-@keyframes idleSquish{
-  0%,100%{ border-radius: 999px; }
-  50%{ border-radius: 999px 999px 920px 920px; }
-}
-@keyframes blink{
-  0%, 92%, 100%{ transform: scaleY(1); }
-  94%{ transform: scaleY(.12); }
-  96%{ transform: scaleY(1); }
-}
-@keyframes lookAround{
-  0%,100%{ transform: translate(0,0); }
-  25%{ transform: translate(2px,1px); }
-  50%{ transform: translate(-2px,1px); }
-  75%{ transform: translate(1px,-1px); }
-}
-@keyframes playBounce{
-  0%,100%{ transform: translateY(0) rotate(0deg) scale(1); }
-  35%{ transform: translateY(-16px) rotate(6deg) scale(1.02); }
-  70%{ transform: translateY(2px) rotate(-6deg) scale(.98); }
-}
-@keyframes eatChomp{
-  0%,100%{ transform: scaleY(1) scaleX(1); }
-  50%{ transform: scaleY(.92) scaleX(1.03); }
-}
-@keyframes sleepBob{
-  0%,100%{ transform: translateY(2px) scale(.99); }
-  50%{ transform: translateY(-4px) scale(1); }
-}
-@keyframes zzz{
-  0%{ transform: translateY(10px); opacity: 0; }
-  30%{ opacity: .9; }
-  100%{ transform: translateY(-10px); opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .pet, .pet *{ animation: none !important; transition: none !important; }
-}
-/* ===== Minijuego: arrastrar mascota y atrapar pelota ===== */
-.gameOverlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.35);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding: 16px;
-  z-index: 9999;
-}
-
-.gameCard{
-  width: min(520px, 100%);
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e6e6e6;
-  box-shadow: 0 18px 40px rgba(0,0,0,.20);
-  overflow: hidden;
-}
-
-.gameTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 10px;
-  padding: 12px 12px;
-  border-bottom: 1px solid #eee;
-}
-
-.gameHud{
-  display:flex;
-  gap: 12px;
-  font-size: 14px;
-  opacity: .9;
-}
-
-.gameClose{
-  padding: 8px 10px;
-  margin: 0;
-}
-
-.gameArea{
-  position: relative;
-  height: 320px;
-  background: linear-gradient(180deg, #fafafa, #f3f3f3);
-  touch-action: none; /* importante para arrastrar en móvil */
-  overflow: hidden;
-}
-
-/* Mascota arrastrable: “pelota” simple */
-.dragPet{
-  position:absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e8f3ff 40%, #b7dbff 100%);
-  box-shadow: 0 14px 25px rgba(0,0,0,.18);
-  left: 20px;
-  top: 200px;
-  cursor: grab;
-}
-
-.dragPet:active{ cursor: grabbing; }
-
-/* carita muy simple sin sub-elementos (ligero) */
-.dragPet::before{
-  content:"";
-  position:absolute;
-  left: 18px; top: 26px;
-  width: 8px; height: 8px;
-  border-radius: 999px;
-  background:#111;
-  box-shadow: 26px 0 0 #111;
-}
-.dragPet::after{
-  content:"";
-  position:absolute;
-  left: 24px; top: 44px;
-  width: 22px; height: 12px;
-  border: 3px solid #111;
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
-  border-radius: 0 0 999px 999px;
-}
-
-/* Pelota objetivo */
-.targetBall{
-  position:absolute;
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #fff3b5 35%, #ffd44d 100%);
-  box-shadow: 0 12px 22px rgba(0,0,0,.14);
-  left: 380px;
-  top: 90px;
-  animation: targetPulse 1.1s ease-in-out infinite;
-}
-
-@keyframes targetPulse{
-  0%,100%{ transform: scale(1); }
-  50%{ transform: scale(1.06); }
-}
-
-.gameTip{
-  padding: 10px 12px 14px;
-}
-    
-  </style>
-</head>
-<body>
-  <h1>🐾 Mascota</h1>
-<div id="Petstage">
-  <div id="pet" class="pet state-idle mood-ok" aria-label="mascota">
-    <div class="shine"></div>
-
-    <div class="face">
-      <div class="eyes">
-        <div class="eye left"><div class="pupil"></div></div>
-        <div class="eye right"><div class="pupil"></div></div>
-      </div>
-      <div class="mouth"></div>
-      <div class="cheek left"></div>
-      <div class="cheek right"></div>
-    </div>
-
-    <div class="zzz" aria-hidden="true">ZzZ</div>
-  </div>
-
-  <div id="petBubble" class="small"></div>
-</div>
-
-  <label>Tu nombre (para registrar quién hizo la acción)</label>
-  <input id="who" placeholder="Ej: Alex" />
-
-  <label>Nombre de la mascota</label>
-  <input id="petName" />
-
-  <div>
-    <div>Hambre: <span id="HungerTxt"></span></div>
-    <div class="bar"><div class="fill" id="HungerBar"></div></div>
-
-    <div>Felicidad: <span id="happyTxt"></span></div>
-    <div class="bar"><div class="fill" id="happyBar"></div></div>
-
-    <div>Energía: <span id="EnergyTxt"></span></div>
-    <div class="bar"><div class="fill" id="EnergyBar"></div></div>
-  </div>
-
-  <button onclick="act('feed')">🍎 Alimentar</button>
-  <button onclick="startCatchGame()">🎮 Atrapa la pelota</button>
-  <button onclick="act('sleep')">😴 Dormir</button>
-  <button onclick="saveName()">💾 Guardar nombre</button>
-
-  <p class="small">
-    Última acción: <b id="LastAction"></b> — por <b id="LastBy"></b>
-  </p>
-
-  <div id="gameOverlay" ...> ... </div>
-  <!-- Firebase (sin instalar nada) -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const bubble = document.getElementById("petBubble");
-  bubble.textContent = "JS cargado ✅ Conectando a Firebase…";
-
-  // Pega aquí SOLO el objeto firebaseConfig (el tuyo real)
-  const firebaseConfig = {
-    apiKey: "AIzaSyAl-_NVNdvBSq08C9d5soYAi-K20-2zM8E",
-    authDomain: "mascota-pareja.firebaseapp.com",
-    projectId: "mascota-pareja",
-    storageBucket: "mascota-pareja.firebasestorage.app",
-    messagingSenderId: "139071919542",
-    appId: "1:139071919542:web:3687d6b75f27040d2e5d17",
-    measurementId: "G-J0CL7GXBLD"
-  };
-
-  let db, petRef;
-
-  try {
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    petRef = doc(db, "Pets", "shared");
-    bubble.textContent = "Firebase OK ✅ Leyendo mascota…";
-  } catch (e) {
-    bubble.textContent = "Error inicializando Firebase: " + (e?.message ?? e);
-    throw e;
-  }
-
-  function applyTimeDecay(p){
-  if (!p.updatedAt) return { ...p, needsUpdate: false };
-
-  const now = Date.now();
-  const last = p.updatedAt.toDate().getTime();
-  const minutesPassed = Math.floor((now - last) / (1000 * 60 * 10)); // bloques de 10 min
-
-  if (minutesPassed <= 0) return { ...p, needsUpdate: false };
-
-  let Hunger = p.Hunger ?? 0;
-  let Happiness = p.Happiness ?? 0;
-  let Energy = p.Energy ?? 0;
-
-  Hunger -= minutesPassed * 1;
-  Energy -= minutesPassed * 1;
-
-  if (Hunger < 30 || Energy < 30) {
-    Happiness -= minutesPassed * 1;
-  }
-
-  return {
-    Hunger: clamp(Hunger),
-    Happiness: clamp(Happiness),
-    Energy: clamp(Energy),
-    needsUpdate: true
-  };
-}
-
-function circlesOverlap(a, b){
-  const dx = a.cx - b.cx;
-  const dy = a.cy - b.cy;
-  const dist2 = dx*dx + dy*dy;
-  const r = a.rad + b.rad;
-  return dist2 <= (r*r);
-}
-
-function clampPos(val, min, max){ return Math.max(min, Math.min(max, val)); }
-
-function placeTargetRandom(){
-  const area = el("gameArea").getBoundingClientRect();
-  const target = el("targetBall");
-
-  const tw = target.offsetWidth;
-  const th = target.offsetHeight;
-
-  // margen para que no salga pegada a bordes
-  const pad = 12;
-
-  const x = Math.floor(Math.random() * (area.width - tw - pad*2)) + pad;
-  const y = Math.floor(Math.random() * (area.height - th - pad*2)) + pad;
-
-  target.style.left = x + "px";
-  target.style.top = y + "px";
-}
-
-function setDragPetPos(x, y){
-  const area = el("gameArea").getBoundingClientRect();
-  const pet = el("dragPet");
-
-  const pw = pet.offsetWidth;
-  const ph = pet.offsetHeight;
-
-  const nx = clampPos(x, 0, area.width - pw);
-  const ny = clampPos(y, 0, area.height - ph);
-
-  pet.style.left = nx + "px";
-  pet.style.top = ny + "px";
-}
-
-function updateHud(){
-  el("gameScore").textContent = String(gameScore);
-  el("gameTime").textContent = String(gameSecondsLeft);
-}
-
-function checkCatch(){
-  const petR = el("dragPet").getBoundingClientRect();
-  const tarR = el("targetBall").getBoundingClientRect();
-
-  const A = rectCenter(petR);
-  const B = rectCenter(tarR);
-
-  if (circlesOverlap(A, B)){
-    gameScore += 1;
-    updateHud();
-    placeTargetRandom();
-  }
-}
-
-function pointerPosInArea(ev){
-  const area = el("gameArea").getBoundingClientRect();
-  return { x: ev.clientX - area.left, y: ev.clientY - area.top };
-}
-
-function onPointerDown(ev){
-  if (!gameRunning) return;
-
-  const pet = el("dragPet");
-  // permite enganchar aunque el target sea un pseudo-elemento o similar
-  if (!ev.target.closest || !ev.target.closest("#dragPet")) return;
-
-  ev.preventDefault();
-  pet.setPointerCapture(ev.pointerId);
-
-  const pos = pointerPosInArea(ev);
-  const left = parseFloat(pet.style.left || "0");
-  const top  = parseFloat(pet.style.top  || "0");
-
-  dragging = true;
-  dragOffsetX = pos.x - left;
-  dragOffsetY = pos.y - top;
-
-  el("gameTip").textContent = "¡Bien! Ahora atrapa la pelota.";
-}
-
-
-function onPointerMove(ev){
-  if (!gameRunning || !dragging) return;
-  ev.preventDefault();
-
-  const pos = pointerPosInArea(ev);
-  setDragPetPos(pos.x - dragOffsetX, pos.y - dragOffsetY);
-  checkCatch();
-}
-
-function onPointerUp(ev){
-  if (!gameRunning) return;
-  dragging = false;
-}
-
-function resetGame(){
-  gameScore = 0;
-  gameSecondsLeft = 15;
-  updateHud();
-
-  // posiciones iniciales
-  setDragPetPos(20, 220);
-  placeTargetRandom();
-
-  el("gameTip").textContent = "Toca la mascota y arrástrala para atrapar la pelota.";
-}
-
-window.startCatchGame = () => {
-  if (gameRunning) return;
-
-  el("gameOverlay").hidden = false;
-  resetGame();
-  gameRunning = true;
-
-  // Eventos de arrastre (pointer events = mouse + touch)
-  const area = el("gameArea");
-  area.addEventListener("pointerdown", onPointerDown);
-  area.addEventListener("pointermove", onPointerMove);
-  area.addEventListener("pointerup", onPointerUp);
-  area.addEventListener("pointercancel", onPointerUp);
-
-  // Temporizador
-  if (gameTimerId) clearInterval(gameTimerId);
-  gameTimerId = setInterval(() => {
-    gameSecondsLeft -= 1;
-    updateHud();
-    if (gameSecondsLeft <= 0){
-      endCatchGame(false);
+    #Petstage{
+      margin: 12px 0 16px;
+      padding: 14px 12px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
     }
-  }, 1000);
-};
 
-window.endCatchGame = async (manualClose) => {
-  if (!gameRunning) {
-    el("gameOverlay").hidden = true;
-    return;
-  }
+    #petBubble{ margin-top: 8px; min-height: 18px; }
 
-  gameRunning = false;
-  dragging = false;
-
-  if (gameTimerId) clearInterval(gameTimerId);
-  gameTimerId = null;
-
-  // limpiar listeners
-  const area = el("gameArea");
-  area.removeEventListener("pointerdown", onPointerDown);
-  area.removeEventListener("pointermove", onPointerMove);
-  area.removeEventListener("pointerup", onPointerUp);
-  area.removeEventListener("pointercancel", onPointerUp);
-
-  el("gameOverlay").hidden = true;
-
-  // Si se cerró manualmente al instante, no premiamos (evita “farmear”)
-  if (manualClose) {
-    bubble.textContent = "Juego cerrado.";
-    return;
-  }
-
-  // Recompensas: ajusta a tu gusto
-  const rewardHappy = clamp(gameScore * 2);      // +2 por punto (máx 100 por clamp)
-  const costEnergy  = clamp(5 + gameScore);      // cansa un poco más si juegas más
-
-  bubble.textContent = `¡Bien! Puntos: ${gameScore}. +${rewardHappy} felicidad, -${costEnergy} energía.`;
-
-  // Leemos valores actuales de la UI (como ya haces en act)
-  const Hunger = Number(document.getElementById("HungerTxt").textContent || 0);
-  const Happiness = Number(document.getElementById("happyTxt").textContent || 0);
-  const Energy = Number(document.getElementById("EnergyTxt").textContent || 0);
-
-  const nha = clamp(Happiness + rewardHappy);
-  const ne  = clamp(Energy - costEnergy);
-
-  const who = document.getElementById("who").value.trim() || "Alguien";
-
-  try{
-    await updateDoc(petRef, {
-      Happiness: nha,
-      Energy: ne,
-      LastAction: "Minijuego: Atrapa la pelota",
-      LastBy: who,
-      updatedAt: serverTimestamp()
-    });
-  } catch(e){
-    bubble.textContent = "Error guardando resultado del juego: " + (e?.message ?? e);
-  }
-};
-  
-  const now = Date.now();
-  const last = p.updatedAt.toDate().getTime();
-  const minutesPassed = Math.floor((now - last) / (1000 * 60 * 10)); // bloques de 10 min
-
-  if (minutesPassed <= 0) return { ...p, needsUpdate: false };
-
-  let Hunger = p.Hunger ?? 0;
-  let Happiness = p.Happiness ?? 0;
-  let Energy = p.Energy ?? 0;
-
-  Hunger -= minutesPassed * 1;
-  Energy -= minutesPassed * 1;
-
-  if (Hunger < 30 || Energy < 30) {
-    Happiness -= minutesPassed * 1;
-  }
-
-  return {
-    Hunger: clamp(Hunger),
-    Happiness: clamp(Happiness),
-    Energy: clamp(Energy),
-    needsUpdate: true
-  };
-}
-
-  function setBars(p){
-    const Hunger = Number(p.Hunger ?? 0);
-    const Happiness = Number(p.Happiness ?? 0);
-    const Energy = Number(p.Energy ?? 0);
-
-    document.getElementById("HungerTxt").textContent = Hunger;
-    document.getElementById("happyTxt").textContent = Happiness;
-    document.getElementById("EnergyTxt").textContent = Energy;
-
-    document.getElementById("HungerBar").style.width = Hunger + "%";
-    document.getElementById("happyBar").style.width = Happiness + "%";
-    document.getElementById("EnergyBar").style.width = Energy + "%";
-
-    document.getElementById("LastAction").textContent = p.LastAction ?? "-";
-    document.getElementById("LastBy").textContent = p.LastBy ?? "-";
-  }
-
-  function setPetState(state){
-  const petEl = document.getElementById("pet");
-  petEl.classList.remove("state-idle","state-play","state-eat","state-sleep");
-  petEl.classList.add(`state-${state}`);
-}
-
-function setPetMood(p){
-  const petEl = document.getElementById("pet");
-
-  const Hunger = Number(p.Hunger ?? 0);
-  const Happiness = Number(p.Happiness ?? 0);
-  const Energy = Number(p.Energy ?? 0);
-
-  // mood (color/expresión)
-  petEl.classList.remove("mood-ok","mood-hungry","mood-tired","mood-sad");
-
-  if (Happiness <= 20) petEl.classList.add("mood-sad");
-  else if (Hunger <= 20) petEl.classList.add("mood-hungry");
-  else if (Energy <= 20) petEl.classList.add("mood-tired");
-  else petEl.classList.add("mood-ok");
-
-  // state (animación principal)
-  if (Energy <= 15) { setPetState("sleep"); bubble.textContent = "Tengo sueño…"; return; }
-  if (Hunger <= 15 || Happiness <= 15) { setPetState("idle"); bubble.textContent = "No me siento muy bien…"; return; }
-
-  setPetState("idle");
-  bubble.textContent = "¡Estoy bien!";
-}
-
-
-  onSnapshot(
-    petRef,
-    (snap) => {
-      if (!snap.exists()) {
-        bubble.textContent = "No existe Pets/shared en Firestore.";
-        return;
-      }
-      const p = snap.data();
-const decayed = applyTimeDecay(p);
-
-if (decayed.needsUpdate) {
-  updateDoc(petRef, {
-    Hunger: decayed.Hunger,
-    Happiness: decayed.Happiness,
-    Energy: decayed.Energy,
-    updatedAt: serverTimestamp()
-  });
-}
-      document.getElementById("petName").value = p.name ?? "";
-      setBars(decayed);
-      setPetMood(decayed);
-    },
-    (err) => {
-      bubble.textContent = "Error Firestore: " + err.message;
+    .pet{
+      width: 140px;
+      height: 140px;
+      border-radius: 999px;
+      position: relative;
+      box-shadow: 0 18px 35px rgba(0,0,0,.18);
+      user-select: none;
+      display:inline-block;
+      will-change: transform;
     }
-  );
 
-  window.act = async (type) => {
-    const who = document.getElementById("who").value.trim() || "Alguien";
+    /* piel por mood */
+    .pet.mood-ok{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e8f3ff 35%, #b7dbff 100%); }
+    .pet.mood-hungry{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #fff0e0 40%, #ffb87a 100%); }
+    .pet.mood-tired{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f0f0ff 40%, #b9b9ff 100%); }
+    .pet.mood-sad{ background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f3f3f3 35%, #cfcfcf 100%); }
 
-    const Hunger = Number(document.getElementById("HungerTxt").textContent || 0);
-    const Happiness = Number(document.getElementById("happyTxt").textContent || 0);
-    const Energy = Number(document.getElementById("EnergyTxt").textContent || 0);
-
-    let nh = Hunger, nha = Happiness, ne = Energy, actionText = "";
-
-    if(type==="feed"){ nh = clamp(Hunger + 20); ne = clamp(Energy - 5); actionText="Alimentar"; }
-    if(type==="play"){ nha = clamp(Happiness + 20); ne = clamp(Energy - 15); nh = clamp(Hunger - 5); actionText="Jugar"; }
-    if(type==="sleep"){ ne = clamp(Energy + 25); nh = clamp(Hunger - 10); actionText="Dormir"; }
-
-    if(type==="play"){ setPetState("play"); setTimeout(() => setPetState("idle"), 1400); }
-if(type==="feed"){ setPetState("eat");  setTimeout(() => setPetState("idle"), 900); }
-if(type==="sleep"){ setPetState("sleep"); }
-
-
-    try {
-      await updateDoc(petRef, {
-        Hunger: nh,
-        Happiness: nha,
-        Energy: ne,
-        LastAction: actionText,
-        LastBy: who,
-        updatedAt: serverTimestamp()
-      });
-    } catch (e) {
-      bubble.textContent = "Error al guardar: " + (e?.message ?? e);
+    .shine{
+      position:absolute;
+      top: 18px; left: 22px;
+      width: 52px; height: 52px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
     }
-  };
 
-  window.saveName = async () => {
-    const name = document.getElementById("petName").value.trim() || "Mascota";
-    try {
-      await updateDoc(petRef, { name });
-    } catch (e) {
-      bubble.textContent = "Error guardando nombre: " + (e?.message ?? e);
+    .face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+
+    .eyes{
+      position:absolute;
+      top: 48px;
+      width: 90px;
+      display:flex;
+      justify-content:space-between;
     }
-  };
-</script>
-  <div id="gameOverlay" class="gameOverlay" hidden>
-  <div class="gameCard">
-    <div class="gameTop">
-      <div><b>🎮 Atrapa la pelota</b></div>
-      <div class="gameHud">
-        <span>Tiempo: <b id="gameTime">15</b>s</span>
-        <span>Puntos: <b id="gameScore">0</b></span>
-      </div>
-      <button class="gameClose" onclick="endCatchGame(true)">✖</button>
-    </div>
 
-    <div id="gameArea" class="gameArea">
-      <!-- Mascota arrastrable (simplificada para el juego) -->
-      <div id="dragPet" class="dragPet" aria-label="mascota arrastrable"></div>
+    .eye{
+      width: 22px; height: 22px;
+      background: #111;
+      border-radius: 999px;
+      position:relative;
+      overflow:hidden;
+      transform-origin: 50% 50%;
+    }
 
-      <!-- Pelota objetivo -->
-      <div id="targetBall" class="targetBall" aria-label="pelota objetivo"></div>
-    </div>
+    .pupil{
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 999px;
+      position:absolute;
+      top: 5px; left: 6px;
+      opacity: .9;
+    }
 
-    <div class="gameTip small" id="gameTip">
-      Toca la mascota y arrástrala para atrapar la pelota.
-    </div>
-  </div>
-</div>
-</body>
-</html>
+    .mouth{
+      position:absolute;
+      top: 82px;
+      width: 28px; height: 14px;
+      border: 4px solid #111;
+      border-top: 0;
+      border-left: 0;
+      border-right: 0;
+      border-radius: 0 0 999px 999px;
+    }
+
+    .cheek{
+      position:absolute;
+      top: 82px;
+      width: 14px; height: 10px;
+      border-radius: 999px;
+      background: rgba(255,90,120,.25);
+    }
+    .cheek.left{ left: 34px; }
+    .cheek.right{ right: 34px; }
+
+    .zzz{
+      position:absolute;
+      top: -8px;
+      right: -10px;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events:none;
+    }
+
+    /* Estados */
+    .pet.state-idle{
+      animation: idleFloat 2.2s ease-in-out infinite,
+                 idleSquish 2.2s ease-in-out infinite;
+    }
+    .pet.state-idle .eye{ animation: blink 4.8s infinite; }
+    .pet.state-idle .pupil{ animation: lookAround 3.8s ease-in-out infinite; }
+
+    .pet.state-play{ animation: playBounce .9s ease-in-out infinite; }
+    .pet.state-eat{ animation: eatChomp .55s ease-in-out 6; }
+
+    .pet.state-sleep{
+      animation: sleepBob 2.8s ease-in-out infinite;
+      filter: saturate(.85);
+    }
+    .pet.state-sleep .eyes{ opacity: .15; }
+    .pet.state-sleep .mouth{
+      width: 18px; height: 10px;
+      border-width: 3px;
+      border-radius: 999px;
+      border-top: 3px solid #111;
+      border-left: 0; border-right: 0; border-bottom: 0;
+      top: 86px;
+    }
+    .pet.state-sleep .zzz{
+      opacity: 1;
+      animation: zzz 1.6s ease-in-out infinite;
+    }
+
+    /* Mood triste */
+    .pet.mood-sad{
+      transform: translateY(6px) scaleY(.97);
+    }
+    .pet.mood-sad .mouth{
+      top: 88px;
+      width: 26px;
+      height: 10px;
+      border-bottom: 0;
+      border-top: 4px solid #111;
+      border-radius: 999px 999px 0 0;
+    }
+
+    /* Animaciones */
+    @keyframes idleFloat{
+      0%,100%{ transform: translateY(0px); }
+      50%{ transform: translateY(-6px); }
+    }
+    @keyframes idleSquish{
+      0%,100%{ border-radius: 999px; }
+      50%{ border-radius: 999px 999px 920px 920px; }
+    }
+    @keyframes blink{
+      0%, 92%, 100%{ transform: scaleY(1); }
+      94%{ transform: scaleY(.12); }
+      96%{ transform: scaleY(1); }
+    }
+    @keyframes lookAround{
+      0%,100%{ transform: translate(0,0); }
+      25%{ transform: translate(2px,1px); }
+      50%{ transform: translate(-2px,1px); }
+      75%{ transform: translate(1px,-1px); }
+    }
+    @keyframes playBounce{
+      0%,100%{ transform: translateY(0) rotate(0deg) scale(1); }
+      35%{ transform: translateY(-16px) rotate(6deg) scale(1.02); }
+      70%{ transform: translateY(2px) rotate(-6deg) scale(.98); }
+    }
+    @keyframes eatChomp{
+      0%,100%{ transform: scaleY(1) scaleX(1); }
+      50%{ transform: scaleY(.92) scaleX(1.03); }
+    }
+    @keyframes sleepBob{
+      0%,100%{ transform: translateY(2px) scale(.99); }
+      50%{ transform: translateY(-4px) scale(1); }
+    }
+    @keyframes zzz{
+      0%{ transform: translateY(10px); opacity: 0; }
+      30%{ opacity: .9; }
+      100%{ transform: translateY(-10px); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .pet, .pet *{ animation: none !important; transition: none !important; }
+    }
+
+    /* ===== Minijuego: arrastrar mascota y atrapar pelota ===== */
+    .gameOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 9999;
+    }
+
+    .gameCard{
+      width: min(520px, 100%);
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e6e6e6;
