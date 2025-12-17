@@ -379,6 +379,7 @@
     Última acción: <b id="LastAction"></b> — por <b id="LastBy"></b>
   </p>
 
+  <div id="gameOverlay" ...> ... </div>
   <!-- Firebase (sin instalar nada) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -410,23 +411,32 @@
     throw e;
   }
 
-  function clamp(n){ return Math.max(0, Math.min(100, n)); }
-function applyTimeDecay(p){
+  function applyTimeDecay(p){
   if (!p.updatedAt) return { ...p, needsUpdate: false };
-// ===== Minijuego: arrastrar mascota y atrapar pelota =====
-let gameRunning = false;
-let gameScore = 0;
-let gameSecondsLeft = 15;
-let gameTimerId = null;
 
-let dragging = false;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
+  const now = Date.now();
+  const last = p.updatedAt.toDate().getTime();
+  const minutesPassed = Math.floor((now - last) / (1000 * 60 * 10)); // bloques de 10 min
 
-function el(id){ return document.getElementById(id); }
+  if (minutesPassed <= 0) return { ...p, needsUpdate: false };
 
-function rectCenter(r){
-  return { cx: r.left + r.width/2, cy: r.top + r.height/2, rad: Math.min(r.width, r.height)/2 };
+  let Hunger = p.Hunger ?? 0;
+  let Happiness = p.Happiness ?? 0;
+  let Energy = p.Energy ?? 0;
+
+  Hunger -= minutesPassed * 1;
+  Energy -= minutesPassed * 1;
+
+  if (Hunger < 30 || Energy < 30) {
+    Happiness -= minutesPassed * 1;
+  }
+
+  return {
+    Hunger: clamp(Hunger),
+    Happiness: clamp(Happiness),
+    Energy: clamp(Energy),
+    needsUpdate: true
+  };
 }
 
 function circlesOverlap(a, b){
@@ -498,8 +508,8 @@ function onPointerDown(ev){
   if (!gameRunning) return;
 
   const pet = el("dragPet");
-  // solo enganchar si tocas la mascota
-  if (ev.target !== pet) return;
+  // permite enganchar aunque el target sea un pseudo-elemento o similar
+  if (!ev.target.closest || !ev.target.closest("#dragPet")) return;
 
   ev.preventDefault();
   pet.setPointerCapture(ev.pointerId);
@@ -514,6 +524,7 @@ function onPointerDown(ev){
 
   el("gameTip").textContent = "¡Bien! Ahora atrapa la pelota.";
 }
+
 
 function onPointerMove(ev){
   if (!gameRunning || !dragging) return;
