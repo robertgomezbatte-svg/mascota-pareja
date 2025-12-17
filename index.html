@@ -295,6 +295,9 @@
     .gameTip{ padding: 10px 12px 14px; }
   </style>
 </head>
+ 
+  [hidden]{ display:none !important; }
+  
 <body>
   <h1>🐾 Mascota</h1>
 
@@ -619,10 +622,17 @@
     };
 
     window.endCatchGame = async (manualClose) => {
-      if (!gameRunning) {
-        el("gameOverlay").hidden = true;
-        return;
-      }
+  // Cierra SIEMPRE el overlay, incluso si gameRunning está false
+  const overlay = el("gameOverlay");
+  if (overlay) overlay.hidden = true;
+
+  if (!gameRunning) {
+    bubble.textContent = "Juego cerrado.";
+    return;
+  }
+
+  // ... (resto igual)
+
 
       gameRunning = false;
       dragging = false;
@@ -739,6 +749,12 @@
         bubble.textContent = "Error guardando nombre: " + (e?.message ?? e);
       }
     };
+
+    window.addEventListener("error", (e) => {
+  bubble.textContent = "Error JS: " + (e?.message ?? e);
+});
+bubble.textContent = "JS OK ✅ (si ves esto, el script está funcionando)";
+
   </script>
 </body>
 </html>
