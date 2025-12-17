@@ -293,11 +293,9 @@
     }
 
     .gameTip{ padding: 10px 12px 14px; }
+    [hidden]{ display:none !important; }
   </style>
 </head>
- 
-  [hidden]{ display:none !important; }
-  
 <body>
   <h1>🐾 Mascota</h1>
 
@@ -372,6 +370,7 @@
 
   <!-- Firebase (sin instalar nada) -->
   <script type="module">
+    el("gameOverlay").hidden = true;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
